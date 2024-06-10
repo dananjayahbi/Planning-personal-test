@@ -21,7 +21,8 @@ app.get("/", (req, res) => {
 });
 
 // Include annex routes
-app.use("/annex", require("./routes/annex.route"));  // Added this line
+app.use("/annex", require("./routes/annex.route"));
+app.use("/bike", require("./routes/bike.route"));
 
 // app.use("/users", require("./routes/UserRoutes"));
 
