@@ -24,7 +24,6 @@ const annexSchema = new Schema({
     },
     favLevel: {
         type: Number,
-        required: true,
     }
 });
 

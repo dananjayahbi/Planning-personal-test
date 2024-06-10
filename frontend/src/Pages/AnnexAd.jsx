@@ -1,45 +1,88 @@
 import React, { useState, useEffect } from "react";
 import { List, Card, Button, Image, Input } from "antd";
 import axios from "axios";
+import AddAnnexModal from "./AddAnnexModal";
+import EditAnnexModal from "./EditAnnexModal";
+import DeleteAnnexModal from "./DeleteAnnexModal";
 
 const { Meta } = Card;
 const { TextArea } = Input;
 
 const AnnexAd = () => {
   const [annexes, setAnnexes] = useState([]);
+  const [addAnnexModalVisible, setAddAnnexModalVisible] = useState(false);
+  const [editAnnexModalVisible, setEditAnnexModalVisible] = useState(false);
+  const [deleteAnnexModalVisible, setDeleteAnnexModalVisible] = useState(false);
+  const [selectedAnnex, setSelectedAnnex] = useState({});
+
+  const fetchAnnexes = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/annex/getAllAnnexes"
+      );
+      // Prepend base URL to image URLs
+      const annexesWithFullUrls = response.data.map((annex) => ({
+        ...annex,
+        imageUrls: annex.imageUrls.map((url) => `http://localhost:5000${url}`),
+      }));
+      setAnnexes(annexesWithFullUrls);
+    } catch (error) {
+      console.error("Error fetching annexes:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchAnnexes = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/annex/getAllAnnexes"
-        );
-        // Prepend base URL to image URLs
-        const annexesWithFullUrls = response.data.map((annex) => ({
-          ...annex,
-          imageUrls: annex.imageUrls.map(
-            (url) => `http://localhost:5000${url}`
-          ),
-        }));
-        setAnnexes(annexesWithFullUrls);
-      } catch (error) {
-        console.error("Error fetching annexes:", error);
-      }
-    };
-
     fetchAnnexes();
   }, []);
-
-  const handleUpdate = (id) => {
-    console.log("Update annex with id:", id);
-  };
 
   const handleDelete = (id) => {
     console.log("Delete annex with id:", id);
   };
 
+  const handleAddAnnex = () => {
+    setAddAnnexModalVisible(true);
+  };
+
+  const handleAddAnnexModalCancel = () => {
+    setAddAnnexModalVisible(false);
+  };
+
+  const handleAddAnnexModalAdd = () => {
+    setAddAnnexModalVisible(false);
+    fetchAnnexes();
+  };
+
+  const handleEditAnnex = (annex) => {
+    setEditAnnexModalVisible(true);
+    setSelectedAnnex(annex);
+  };
+
+  const handleEditAnnexModalCancel = () => {
+    setEditAnnexModalVisible(false);
+  };
+
+  const handleEditAnnexModalUpdate = () => {
+    setEditAnnexModalVisible(false);
+    fetchAnnexes();
+  };
+
+  const handleDeleteAnnex = (annex) => {
+    setDeleteAnnexModalVisible(true);
+    setSelectedAnnex(annex);
+  };
+
+  const handleDeleteAnnexModalCancel = () => {
+    setDeleteAnnexModalVisible(false);
+  };
+
+  const handleDeleteAnnexModalDelete = () => {
+    setDeleteAnnexModalVisible(false);
+    fetchAnnexes();
+  };
+
   return (
     <div style={{ padding: "20px" }}>
+      <Button type="primary" onClick={handleAddAnnex}>Add Annex</Button>
       <List
         grid={{ gutter: 16, column: 3 }}
         dataSource={annexes}
@@ -52,14 +95,14 @@ const AnnexAd = () => {
                   <Button
                     type="primary"
                     style={{ marginLeft: "5px", marginRight: "5px" }}
-                    onClick={() => handleUpdate(annex._id)}
+                    onClick={() => handleEditAnnex(annex)}
                   >
                     Update
                   </Button>
                   <Button
                     danger
                     style={{ marginLeft: "5px", marginRight: "5px" }}
-                    onClick={() => handleDelete(annex._id)}
+                    onClick={() => handleDeleteAnnex(annex)}
                   >
                     Delete
                   </Button>
@@ -131,6 +174,26 @@ const AnnexAd = () => {
             </Card>
           </List.Item>
         )}
+      />
+      {/* Add Annex Modal */}
+      <AddAnnexModal
+        visible={addAnnexModalVisible}
+        onCancel={handleAddAnnexModalCancel}
+        onAdd={handleAddAnnexModalAdd}
+      />
+      {/* Edit Anned Modal */}
+      <EditAnnexModal
+        visible={editAnnexModalVisible}
+        selectedAnnex={selectedAnnex}
+        onCancel={handleEditAnnexModalCancel}
+        onUpdate={handleEditAnnexModalUpdate}
+      />
+      {/* Delete Annex MNodal */}
+      <DeleteAnnexModal
+        visible={deleteAnnexModalVisible}
+        onCancel={handleDeleteAnnexModalCancel}
+        onDelete={handleDeleteAnnexModalDelete}
+        annexId={selectedAnnex._id}
       />
     </div>
   );
