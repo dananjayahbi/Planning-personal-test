@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { List, Card, Button, Image, Input, Select } from "antd";
+import { List, Card, Button, Image, Input, Select, message } from "antd";
 import axios from "axios";
+import { CopyOutlined } from "@ant-design/icons";
 import AddJobModal from "./AddJobModal";
 import EditJobModal from "./EditJobModal";
 import DeleteJobModal from "./DeleteJobModal";
@@ -17,6 +18,10 @@ const Jobs = () => {
   const [deleteJobModalVisible, setDeleteJobModalVisible] = useState(false);
   const [selectedJob, setSelectedJob] = useState({});
   const [selectedStatus, setSelectedStatus] = useState("all");
+
+  const portfolio = "Link to portfolio";
+  const git = "Link to GitHub";
+  const UI = "Link to UI";
 
   const fetchJobs = async () => {
     try {
@@ -96,13 +101,32 @@ const Jobs = () => {
     }
   };
 
+  const copyToClipboard = (text) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        message.success("Copied to clipboard!");
+      })
+      .catch((err) => {
+        message.error("Failed to copy!");
+      });
+  };
+
   return (
     <div style={{ padding: "20px" }}>
       <div style={{ marginBottom: "20px" }}>
-        <Button type="primary" style={{ marginRight: "20px" }} onClick={handleBackButton}>
+        <Button
+          type="primary"
+          style={{ marginRight: "20px" }}
+          onClick={handleBackButton}
+        >
           Back
         </Button>
-        <Button type="primary" style={{ marginRight: "20px" }} onClick={handleAddJob}>
+        <Button
+          type="primary"
+          style={{ marginRight: "20px" }}
+          onClick={handleAddJob}
+        >
           Add Job
         </Button>
         <Select
@@ -119,6 +143,78 @@ const Jobs = () => {
           <Option value="Selected">Selected</Option>
         </Select>
       </div>
+      <div>
+        <h2 style={{ fontFamily: "sans-serif", textDecoration: "underline" }}>
+          Important data
+        </h2>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            fontFamily: "sans-serif",
+            marginBottom: "10px",
+          }}
+        >
+          <p style={{ margin: 0 }}>My Portfolio : &nbsp; </p>
+          <Input
+            value={portfolio}
+            readOnly
+            style={{ width: 200, marginRight: 8 }}
+          />
+          <Button
+            type="primary"
+            icon={<CopyOutlined />}
+            onClick={() => copyToClipboard(portfolio)}
+          >
+            Copy
+          </Button>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            fontFamily: "sans-serif",
+            marginBottom: "10px",
+          }}
+        >
+          <p style={{ margin: 0 }}>GitHub : &nbsp; </p>
+          <Input
+            value={git}
+            readOnly
+            style={{ width: 200, marginRight: 8 }}
+          />
+          <Button
+            type="primary"
+            icon={<CopyOutlined />}
+            onClick={() => copyToClipboard(git)}
+          >
+            Copy
+          </Button>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            fontFamily: "sans-serif",
+            marginBottom: "35px",
+          }}
+        >
+          <p style={{ margin: 0 }}>Ui Designs : &nbsp; </p>
+          <Input
+            value={UI}
+            readOnly
+            style={{ width: 200, marginRight: 8 }}
+          />
+          <Button
+            type="primary"
+            icon={<CopyOutlined />}
+            onClick={() => copyToClipboard(UI)}
+          >
+            Copy
+          </Button>
+        </div>
+      </div>
+      <hr />
       <List
         grid={{ gutter: 16, column: 3 }}
         dataSource={filteredJobs}
@@ -162,7 +258,11 @@ const Jobs = () => {
                       marginRight: "3px",
                     }}
                   >
-                    <Image alt={`image-${index}`} style={{ width: "100%" }} src={url} />
+                    <Image
+                      alt={`image-${index}`}
+                      style={{ width: "100%" }}
+                      src={url}
+                    />
                   </div>
                 ))}
               </div>
