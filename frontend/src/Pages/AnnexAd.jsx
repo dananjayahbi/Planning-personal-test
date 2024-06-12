@@ -35,10 +35,6 @@ const AnnexAd = () => {
     fetchAnnexes();
   }, []);
 
-  const handleDelete = (id) => {
-    console.log("Delete annex with id:", id);
-  };
-
   const handleAddAnnex = () => {
     setAddAnnexModalVisible(true);
   };
@@ -80,9 +76,16 @@ const AnnexAd = () => {
     fetchAnnexes();
   };
 
+  const handleBackButton = () => {
+    window.location.href = "/";
+  };
+
   return (
     <div style={{ padding: "20px" }}>
-      <Button type="primary" onClick={handleAddAnnex}>Add Annex</Button>
+      <div style={{marginBottom: "20px"}}>
+        <Button type="primary" style={{marginRight: "20px"}} onClick={handleBackButton}>Back</Button>
+        <Button type="primary" onClick={handleAddAnnex}>Add Annex</Button>
+      </div>
       <List
         grid={{ gutter: 16, column: 3 }}
         dataSource={annexes}
