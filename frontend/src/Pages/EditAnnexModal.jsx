@@ -71,7 +71,7 @@ const EditAnnexModal = ({ visible, onCancel, onUpdate, selectedAnnex }) => {
           loading={loading}
           onClick={form.submit}
         >
-          Add
+          Update
         </Button>,
       ]}
     >
