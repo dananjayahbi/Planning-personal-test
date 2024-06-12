@@ -41,6 +41,9 @@ const createAnnex = async (req, res) => {
             mobileNo: req.body.mobileNo,
             location: req.body.location,
             status: req.body.status,
+            annexToCampusDistance: req.body.annexToCampusDistance,
+            annexToColomboDistance: req.body.annexToColomboDistance,
+            annexToBattaramullaDistance: req.body.annexToBattaramullaDistance,
             favLevel: req.body.favLevel
         });
 
@@ -99,6 +102,9 @@ const updateAnnex = async (req, res) => {
         if (req.body.mobileNo) annex.mobileNo = req.body.mobileNo;
         if (req.body.location) annex.location = req.body.location;
         if (req.body.status) annex.status = req.body.status;
+        if (req.body.annexToCampusDistance) annex.annexToCampusDistance = req.body.annexToCampusDistance;
+        if (req.body.annexToColomboDistance) annex.annexToColomboDistance = req.body.annexToColomboDistance;
+        if (req.body.annexToBattaramullaDistance) annex.annexToBattaramullaDistance = req.body.annexToBattaramullaDistance;
         if (req.body.favLevel) annex.favLevel = req.body.favLevel;
 
         // Handle additional image uploads

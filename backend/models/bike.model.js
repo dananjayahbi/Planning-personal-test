@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const annexSchema = new Schema({
+const bikeSchema = new Schema({
     imageUrls: {
         type: Array,
     },
@@ -22,20 +22,12 @@ const annexSchema = new Schema({
         type: String,
         required: true,
     },
-    annexToCampusDistance: {
-        type: Number,
-    },
-    annexToColomboDistance: {
-        type: Number,
-    },
-    annexToBattaramullaDistance: {
-        type: Number,
-    },
     favLevel: {
         type: Number,
+        required: true,
     }
 });
 
-const Annex = mongoose.model("Annex", annexSchema);
+const Bike = mongoose.model("Bike", bikeSchema);
 
-module.exports = Annex;
+module.exports = Bike;
