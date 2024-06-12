@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { List, Card, Button, Image, Input } from "antd";
+import { List, Card, Button, Image, Input, Select } from "antd";
 import axios from "axios";
 import AddJobModal from "./AddJobModal";
 import EditJobModal from "./EditJobModal";
@@ -7,25 +7,27 @@ import DeleteJobModal from "./DeleteJobModal";
 
 const { Meta } = Card;
 const { TextArea } = Input;
+const { Option } = Select;
 
 const Jobs = () => {
   const [jobs, setJobs] = useState([]);
+  const [filteredJobs, setFilteredJobs] = useState([]);
   const [addJobModalVisible, setAddJobModalVisible] = useState(false);
   const [editJobModalVisible, setEditJobModalVisible] = useState(false);
   const [deleteJobModalVisible, setDeleteJobModalVisible] = useState(false);
   const [selectedJob, setSelectedJob] = useState({});
+  const [selectedStatus, setSelectedStatus] = useState("all");
 
   const fetchJobs = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/job/getAllJobs"
-      );
+      const response = await axios.get("http://localhost:5000/job/getAllJobs");
       // Prepend base URL to image URLs
       const jobsWithFullUrls = response.data.map((job) => ({
         ...job,
         imageUrls: job.imageUrls.map((url) => `http://localhost:5000${url}`),
       }));
       setJobs(jobsWithFullUrls);
+      filterJobs(jobsWithFullUrls, selectedStatus);
     } catch (error) {
       console.error("Error fetching jobs:", error);
     }
@@ -80,15 +82,46 @@ const Jobs = () => {
     window.location.href = "/";
   };
 
+  const handleStatusChange = (value) => {
+    setSelectedStatus(value);
+    filterJobs(jobs, value);
+  };
+
+  const filterJobs = (jobs, status) => {
+    if (status === "all") {
+      setFilteredJobs(jobs);
+    } else {
+      const filtered = jobs.filter((job) => job.status === status);
+      setFilteredJobs(filtered);
+    }
+  };
+
   return (
     <div style={{ padding: "20px" }}>
-      <div style={{marginBottom: "20px"}}>
-        <Button type="primary" style={{marginRight: "20px"}} onClick={handleBackButton}>Back</Button>
-        <Button type="primary" onClick={handleAddJob}>Add Job</Button>
+      <div style={{ marginBottom: "20px" }}>
+        <Button type="primary" style={{ marginRight: "20px" }} onClick={handleBackButton}>
+          Back
+        </Button>
+        <Button type="primary" style={{ marginRight: "20px" }} onClick={handleAddJob}>
+          Add Job
+        </Button>
+        <Select
+          value={selectedStatus}
+          onChange={handleStatusChange}
+          style={{ width: 200 }}
+          placeholder="Select Status"
+        >
+          <Option value="all">All</Option>
+          <Option value="Just Listed">Just Listed</Option>
+          <Option value="CV sent">CV sent</Option>
+          <Option value="Responded">Responded</Option>
+          <Option value="Interviewed">Interviewed</Option>
+          <Option value="Selected">Selected</Option>
+        </Select>
       </div>
       <List
         grid={{ gutter: 16, column: 3 }}
-        dataSource={jobs}
+        dataSource={filteredJobs}
         renderItem={(job) => (
           <List.Item>
             <Card
@@ -129,11 +162,7 @@ const Jobs = () => {
                       marginRight: "3px",
                     }}
                   >
-                    <Image
-                      alt={`image-${index}`}
-                      style={{ width: "100%" }}
-                      src={url}
-                    />
+                    <Image alt={`image-${index}`} style={{ width: "100%" }} src={url} />
                   </div>
                 ))}
               </div>
@@ -192,7 +221,7 @@ const Jobs = () => {
         onCancel={handleEditJobModalCancel}
         onUpdate={handleEditJobModalUpdate}
       />
-      {/* Delete Job MNodal */}
+      {/* Delete Job Modal */}
       <DeleteJobModal
         visible={deleteJobModalVisible}
         onCancel={handleDeleteJobModalCancel}
@@ -201,6 +230,6 @@ const Jobs = () => {
       />
     </div>
   );
-}
+};
 
-export default Jobs
+export default Jobs;
