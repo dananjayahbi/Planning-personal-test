@@ -22,6 +22,9 @@ const AddAnnexModal = ({ visible, onCancel, onAdd }) => {
       formData.append("location", values.location);
       formData.append("status", values.status);
       formData.append("mobileNo", values.mobileNo);
+      formData.append("annexToCampusDistance", values.annexToCampusDistance);
+      formData.append("annexToColomboDistance", values.annexToColomboDistance);
+      formData.append("annexToBattaramullaDistance", values.annexToBattaramullaDistance);
       formData.append("favLevel", values.favLevel);
 
       const response = await axios.post(
@@ -121,6 +124,15 @@ const AddAnnexModal = ({ visible, onCancel, onAdd }) => {
             <Option value="Visited">Visited</Option>
             <Option value="Purchased">Purchased</Option>
           </Select>
+        </Form.Item>
+        <Form.Item label="Annex To Campus Distance (KM)" name="annexToCampusDistance">
+          <Input />
+        </Form.Item>
+        <Form.Item label="Annex To Colombo Distance (KM)" name="annexToColomboDistance">
+          <Input />
+        </Form.Item>
+        <Form.Item label="Annex To Battaramulla Distance (KM)" name="annexToBattaramullaDistance">
+          <Input />
         </Form.Item>
         <Form.Item label="Favourite Level" name="favLevel">
           <Input />

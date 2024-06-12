@@ -22,6 +22,15 @@ const annexSchema = new Schema({
         type: String,
         required: true,
     },
+    annexToCampusDistance: {
+        type: Number,
+    },
+    annexToColomboDistance: {
+        type: Number,
+    },
+    annexToBattaramullaDistance: {
+        type: Number,
+    },
     favLevel: {
         type: Number,
     }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { List, Card, Button, Image, Input } from "antd";
+import { List, Card, Button, Image, Input, Select } from "antd";
 import axios from "axios";
 import AddAnnexModal from "./AddAnnexModal";
 import EditAnnexModal from "./EditAnnexModal";
@@ -7,13 +7,16 @@ import DeleteAnnexModal from "./DeleteAnnexModal";
 
 const { Meta } = Card;
 const { TextArea } = Input;
+const { Option } = Select;
 
 const AnnexAd = () => {
   const [annexes, setAnnexes] = useState([]);
+  const [filteredAnnexes, setFilteredAnnexes] = useState([]);
   const [addAnnexModalVisible, setAddAnnexModalVisible] = useState(false);
   const [editAnnexModalVisible, setEditAnnexModalVisible] = useState(false);
   const [deleteAnnexModalVisible, setDeleteAnnexModalVisible] = useState(false);
   const [selectedAnnex, setSelectedAnnex] = useState({});
+  const [selectedStatus, setSelectedStatus] = useState("all");
 
   const fetchAnnexes = async () => {
     try {
@@ -26,6 +29,7 @@ const AnnexAd = () => {
         imageUrls: annex.imageUrls.map((url) => `http://localhost:5000${url}`),
       }));
       setAnnexes(annexesWithFullUrls);
+      filterAnnexes(annexesWithFullUrls, selectedStatus);
     } catch (error) {
       console.error("Error fetching annexes:", error);
     }
@@ -80,15 +84,46 @@ const AnnexAd = () => {
     window.location.href = "/";
   };
 
+  const handleStatusChange = (value) => {
+    setSelectedStatus(value);
+    filterAnnexes(annexes, value);
+  };
+
+  const filterAnnexes = (annexes, status) => {
+    if (status === "all") {
+      setFilteredAnnexes(annexes);
+    } else {
+      const filtered = annexes.filter((annex) => annex.status === status);
+      setFilteredAnnexes(filtered);
+    }
+  };
+
   return (
     <div style={{ padding: "20px" }}>
-      <div style={{marginBottom: "20px"}}>
-        <Button type="primary" style={{marginRight: "20px"}} onClick={handleBackButton}>Back</Button>
-        <Button type="primary" onClick={handleAddAnnex}>Add Annex</Button>
+      <div style={{ marginBottom: "20px" }}>
+        <Button type="primary" style={{ marginRight: "20px" }} onClick={handleBackButton}>
+          Back
+        </Button>
+        <Button type="primary" style={{ marginRight: "20px" }} onClick={handleAddAnnex}>
+          Add Annex
+        </Button>
+        <Select
+          value={selectedStatus}
+          onChange={handleStatusChange}
+          style={{ width: 200 }}
+          placeholder="Select Status"
+        >
+          <Option value="all">All</Option>
+          <Option value="Nothing did">Nothing did</Option>
+          <Option value="Called">Called</Option>
+          <Option value="Willing To Visit">Willing To Visit</Option>
+          <Option value="Visited">Visited</Option>
+          <Option value="Purchased">Purchased</Option>
+        </Select>
       </div>
       <List
         grid={{ gutter: 16, column: 3 }}
-        dataSource={annexes}
+        dataSource={filteredAnnexes}
         renderItem={(annex) => (
           <List.Item>
             <Card
@@ -168,6 +203,18 @@ const AnnexAd = () => {
                       <Input type="text" readOnly value={annex.status} />
                     </div>
                     <div style={{ marginBottom: "5px" }}>
+                      <b>Annex To Campus Distance (KM) :</b> &nbsp;
+                      <Input type="text" readOnly value={annex.annexToCampusDistance} />
+                    </div>
+                    <div style={{ marginBottom: "5px" }}>
+                      <b>Annex To Colombo Distance (KM) :</b> &nbsp;
+                      <Input type="text" readOnly value={annex.annexToColomboDistance} />
+                    </div>
+                    <div style={{ marginBottom: "5px" }}>
+                      <b>Annex To Battaramulla Distance (KM) :</b> &nbsp;
+                      <Input type="text" readOnly value={annex.annexToBattaramullaDistance} />
+                    </div>
+                    <div style={{ marginBottom: "5px" }}>
                       <b>Fav. Level:</b> &nbsp;
                       <Input type="text" readOnly value={annex.favLevel} />
                     </div>
@@ -184,14 +231,14 @@ const AnnexAd = () => {
         onCancel={handleAddAnnexModalCancel}
         onAdd={handleAddAnnexModalAdd}
       />
-      {/* Edit Anned Modal */}
+      {/* Edit Annex Modal */}
       <EditAnnexModal
         visible={editAnnexModalVisible}
         selectedAnnex={selectedAnnex}
         onCancel={handleEditAnnexModalCancel}
         onUpdate={handleEditAnnexModalUpdate}
       />
-      {/* Delete Annex MNodal */}
+      {/* Delete Annex Modal */}
       <DeleteAnnexModal
         visible={deleteAnnexModalVisible}
         onCancel={handleDeleteAnnexModalCancel}

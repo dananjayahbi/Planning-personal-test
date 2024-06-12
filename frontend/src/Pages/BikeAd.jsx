@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { List, Card, Button, Image, Input } from "antd";
+import { List, Card, Button, Image, Input, Select } from "antd";
 import axios from "axios";
 import AddBikeModal from "./AddBikeModal";
 import EditBikeModal from "./EditBikeModal";
@@ -7,13 +7,16 @@ import DeleteBikeModal from "./DeleteBikeModal";
 
 const { Meta } = Card;
 const { TextArea } = Input;
+const { Option } = Select;
 
 const BikeAd = () => {
   const [bikes, setBikes] = useState([]);
+  const [filteredBikes, setFilteredBikes] = useState([]);
   const [addBikeModalVisible, setAddBikeModalVisible] = useState(false);
   const [editBikeModalVisible, setEditBikeModalVisible] = useState(false);
   const [deleteBikeModalVisible, setDeleteBikeModalVisible] = useState(false);
   const [selectedBike, setSelectedBike] = useState({});
+  const [selectedStatus, setSelectedStatus] = useState("all");
 
   const fetchBikes = async () => {
     try {
@@ -26,6 +29,7 @@ const BikeAd = () => {
         imageUrls: bike.imageUrls.map((url) => `http://localhost:5000${url}`),
       }));
       setBikes(bikesWithFullUrls);
+      filterBikes(bikesWithFullUrls, selectedStatus);
     } catch (error) {
       console.error("Error fetching bikes:", error);
     }
@@ -80,15 +84,46 @@ const BikeAd = () => {
     window.location.href = "/";
   };
 
+  const handleStatusChange = (value) => {
+    setSelectedStatus(value);
+    filterBikes(bikes, value);
+  };
+
+  const filterBikes = (bikes, status) => {
+    if (status === "all") {
+      setFilteredBikes(bikes);
+    } else {
+      const filtered = bikes.filter((bike) => bike.status === status);
+      setFilteredBikes(filtered);
+    }
+  };
+
   return (
     <div style={{ padding: "20px" }}>
-      <div style={{marginBottom: "20px"}}>
-        <Button type="primary" style={{marginRight: "20px"}} onClick={handleBackButton}>Back</Button>
-        <Button type="primary" onClick={handleAddBike}>Add Bike</Button>
+      <div style={{ marginBottom: "20px" }}>
+        <Button type="primary" style={{ marginRight: "20px" }} onClick={handleBackButton}>
+          Back
+        </Button>
+        <Button type="primary" style={{ marginRight: "20px" }} onClick={handleAddBike}>
+          Add Bike
+        </Button>
+        <Select
+          value={selectedStatus}
+          onChange={handleStatusChange}
+          style={{ width: 200 }}
+          placeholder="Select Status"
+        >
+          <Option value="all">All</Option>
+          <Option value="Nothing Did">Nothing Did</Option>
+          <Option value="Called">Called</Option>
+          <Option value="Willing To Visit">Willing to visit</Option>
+          <Option value="Visited">Visited</Option>
+          <Option value="Purchased">Purchased</Option>
+        </Select>
       </div>
       <List
         grid={{ gutter: 16, column: 3 }}
-        dataSource={bikes}
+        dataSource={filteredBikes}
         renderItem={(bike) => (
           <List.Item>
             <Card
@@ -139,7 +174,6 @@ const BikeAd = () => {
               </div>
               <Meta
                 style={{ textAlign: "center", marginTop: "5px" }}
-                // title={bike.description}
                 description={
                   <div style={{ textAlign: "left" }}>
                     <div style={{ marginBottom: "5px" }}>
@@ -191,7 +225,7 @@ const BikeAd = () => {
         onCancel={handleEditBikeModalCancel}
         onUpdate={handleEditBikeModalUpdate}
       />
-      {/* Delete Bike MNodal */}
+      {/* Delete Bike Modal */}
       <DeleteBikeModal
         visible={deleteBikeModalVisible}
         onCancel={handleDeleteBikeModalCancel}
@@ -202,4 +236,4 @@ const BikeAd = () => {
   );
 }
 
-export default BikeAd
+export default BikeAd;
